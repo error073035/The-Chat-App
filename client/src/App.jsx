@@ -1,19 +1,24 @@
-import React, { useEffect } from "react";
-import Home from "./pages/home/Home";
-import Signup from "./pages/authentication/Signup";
-// import { useDispatch, useSelector } from "react-redux";
-// import { Login } from "./store/slice/user/user.slice";
+import { useEffect } from "react";
+import "./App.css";
+import { Toaster } from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { getUserProfileThunk } from "./store/slice/user/user.thunk";
 
 function App() {
-  // const { isAuthenticate } = useSelector((state) => state.userReducer);
-  // const dispatch = useDispatch();
-  // console.log(isAuthenticate);
+  
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   dispatch(Login());
-  // });
+  useEffect(() => {
+    (async () => {
+      await dispatch(getUserProfileThunk());
+    })();
+  }, []);
 
-  return <></>;
+  return (
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+    </>
+  );
 }
 
 export default App;

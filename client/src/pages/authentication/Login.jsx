@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUserThunk } from "../../store/slice/user/user.thunk";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.userReducer);
   const [loginData, setLoginData] = useState({
     username: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (isAuthenticated) navigate("/");
+  }, [isAuthenticated]);
 
   const handleInputChange = (e) => {
     setLoginData((prev) => ({
@@ -16,6 +25,14 @@ export default function Login() {
       [e.target.name]: e.target.value,
     }));
   };
+
+  const handleLogin = async () => {
+    const response = await dispatch(loginUserThunk(loginData));
+    if (response?.payload?.success) {
+      navigate("/");
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen flex items-center justify-center bg-base-200">
@@ -69,11 +86,18 @@ export default function Login() {
               </span>
             </div>
           </label>
-          <button type="submit" className="btn btn-primary w-full mt-2">
+          <button
+            onClick={handleLogin}
+            type="submit"
+            className="btn btn-primary w-full mt-2"
+          >
             Login
           </button>
           <p className="text-sm">
-            Don't have an account? <Link className="text-blue-400 underline" to="/Signup">Signup</Link>
+            Don't have an account?{" "}
+            <Link className="text-blue-400 underline" to="/Signup">
+              Signup
+            </Link>
           </p>
         </form>
       </div>

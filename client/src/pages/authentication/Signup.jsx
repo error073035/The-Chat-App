@@ -1,25 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUserThunk } from "../../store/slice/user/user.thunk";
+import toast from "react-hot-toast";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.userReducer);
   const [signupData, setSignupData] = useState({
-      fullname:"",
-      username: "",
-      password: "",
-      confirmpassword: "",
-    });
-  
-    const handleInputChange = (e) => {
-      setSignupData((prev) => ({
-        ...prev,
-        [e.target.name]: e.target.value,
-      }));
-    };
+    fullName: "",
+    username: "",
+    password: "",
+    confirmPassword: "", // <-- fix here
+    gender: "male",
+  });
+  useEffect(() => {
+    if (isAuthenticated) navigate("/");
+  }, [isAuthenticated]);
 
-    console.log(signupData);
+  const handleInputChange = (e) => {
+    setSignupData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  // console.log(signupData);
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    if (signupData.password !== signupData.confirmPassword) {
+      return toast.error("Password and confirm password do not match");
+    }
+    const response = await dispatch(registerUserThunk(signupData));
+    if (response?.payload?.success) {
+      toast.success("Signup successful! Please login.");
+      navigate("/login");
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen flex items-center justify-center bg-base-200">
@@ -40,12 +63,11 @@ export default function Login() {
               maxLength={30}
               title="Only letters, numbers or dash"
               className="input input-bordered w-full"
-              name="fullname"
+              name="fullName"
               onChange={handleInputChange}
             />
             <div className="label">
-              <span className="label-text-alt text-xs">
-              </span>
+              <span className="label-text-alt text-xs"></span>
             </div>
             <br /> <br />
           </label>
@@ -98,7 +120,8 @@ export default function Login() {
               </span>
             </div>
           </label>
-          <br /><br />
+          <br />
+          <br />
           <label className="form-control w-full">
             <div className="label">
               <span className="label-text flex items-center gap-2">
@@ -113,7 +136,7 @@ export default function Login() {
               pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
               title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
               className="input input-bordered w-full"
-              name="confirmpassword"
+              name="confirmPassword"
               onChange={handleInputChange}
             />
             <div className="label">
@@ -122,11 +145,47 @@ export default function Login() {
               </span>
             </div>
           </label>
-          <button type="submit" className="btn btn-primary w-full mt-2">
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text flex items-center gap-2">Gender</span>
+            </div>
+            <div className="flex gap-6 mt-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="male"
+                  checked={signupData.gender === "male"}
+                  onChange={handleInputChange}
+                  className="radio radio-primary"
+                />
+                <span>Male</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="female"
+                  checked={signupData.gender === "female"}
+                  onChange={handleInputChange}
+                  className="radio radio-primary"
+                />
+                <span>Female</span>
+              </label>
+            </div>
+          </label>
+          <button
+            onClick={handleSignup}
+            type="submit"
+            className="btn btn-primary w-full mt-2"
+          >
             Signup
           </button>
           <p className="text-sm">
-            Already have an account? <Link className="text-blue-400 underline" to="/Login">Login</Link>
+            Already have an account?{" "}
+            <Link className="text-blue-400 underline" to="/Login">
+              Login
+            </Link>
           </p>
         </form>
       </div>
