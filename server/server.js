@@ -22,6 +22,8 @@ app.use(cookieParser());
 
 const userRoute =  require("./routes/user.route.js");
 app.use("/user", userRoute);
+const messageRoute = require("./routes/message.route.js");
+app.use("/message", messageRoute);
 
 app.use('/', (req, res) => {
   res.send("HEllo World");
