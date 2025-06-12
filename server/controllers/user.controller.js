@@ -50,8 +50,8 @@ const register = asyncHandler((async (req, res, next) => {
         Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000
       ),
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: false,
+      sameSite: "Lax",
     })
     .json({
       success: true,
@@ -93,6 +93,7 @@ const login = asyncHandler((async (req, res, next) => {
     expiresIn: process.env.JWT_EXPIRES,
   });
 
+ 
   res
     .status(200)
     .cookie("token", token, {
@@ -100,8 +101,8 @@ const login = asyncHandler((async (req, res, next) => {
         Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000
       ),
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: false,
+      sameSite: "Lax",
     })
     .json({
       success: true,

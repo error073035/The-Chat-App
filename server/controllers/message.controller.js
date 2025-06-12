@@ -2,7 +2,7 @@ const Message = require("../models/message.model.js");
 const Conversation = require("../models/conversation.model.js");
 const asyncHandler = require("../utilities/asyncHandler.utility.js");
 const ErrorHandler = require("../utilities/errorHandler.utility.js");
-// const { getSocketId, io } = require('../socket/socket.js');
+const { getSocketId, io } = require('../socket/socket.js');
 
 const sendMessage = asyncHandler(async (req, res, next) => {
   const senderId = req.user._id;
@@ -36,9 +36,9 @@ const sendMessage = asyncHandler(async (req, res, next) => {
     await conversation.save();
   }
 
-  // // socket.io
-  // const socketId = getSocketId(receiverId)
-  // io.to(socketId).emit("newMessage", newMessage);
+  // socket.io
+  const socketId = getSocketId(receiverId)
+  io.to(socketId).emit("newMessage", newMessage);
 
   res.status(200).json({
     success: true,
