@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerUserThunk } from "../../store/slice/user/user.thunk";
 import toast from "react-hot-toast";
 
-export default function Login() {
+export default function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.userReducer);
